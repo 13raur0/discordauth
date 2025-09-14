@@ -1,0 +1,8 @@
+{
+    "id": "discordauth",
+    "name": "DiscordAuth",
+    "version": "1.0",
+    "main": "com.example.discordauth.DiscordAuthPlugin",
+    "authors": ["Braur0"]
+}
+  
