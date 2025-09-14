@@ -9,12 +9,13 @@ When you run the plugin for the first time, it will generate:
 
 `plugins/discordauth/config.properties`
 
-Edit the file and fill in the following:</br>
-`discord.token : Your Discord bot token`</br>
-`discord.guildId : The Discord server ID for authentication`</br>
-`discord.roleId : The role ID required for verification`</br>
-`discord.adminId : The Discord ID that can execute admin commands like deleting verification`</br>
-
+Edit the file and fill in the following:
+```
+discord.token : Your Discord bot token
+discord.guildId : The Discord server ID for authentication
+discord.roleId : The role ID required for verification
+discord.adminId : The Discord ID that can execute admin commands like deleting verification
+```
 - Create a Discord bot and obtain its token (search online for instructions).  
 - IDs can be obtained from Discord with Developer Mode enabled.
 
