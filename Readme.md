@@ -17,7 +17,7 @@ discord.roleId=987654321098765432
 discord.adminId=000000000000000000
 security.maxFailures=3
 security.blockMinutes=5
-integration.lom.allowedUsersPath=plugins/limitedofflinemode/allowed-users.txt
+integration.lom.allowedUsersPath=plugins/limited-offline-mode/allowed-users.txt
 ```
 - Create a Discord bot and obtain its token (search online for instructions).  
 - IDs can be obtained from Discord with Developer Mode enabled.
