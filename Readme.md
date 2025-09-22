@@ -10,11 +10,14 @@ When you run the plugin for the first time, it will generate:
 `plugins/discordauth/config.properties`
 
 Edit the file and fill in the following:
-```
-discord.token : Your Discord bot token
-discord.guildId : The Discord server ID for authentication
-discord.roleId : The role ID required for verification
-discord.adminId : The Discord ID that can execute admin commands like deleting verification
+```properties
+discord.token=YOUR_DISCORD_BOT_TOKEN_HERE
+discord.guildId=123456789012345678
+discord.roleId=987654321098765432
+discord.adminId=000000000000000000
+security.maxFailures=3
+security.blockMinutes=5
+integration.lom.allowedUsersPath=plugins/limitedofflinemode/allowed-users.txt
 ```
 - Create a Discord bot and obtain its token (search online for instructions).  
 - IDs can be obtained from Discord with Developer Mode enabled.
@@ -60,4 +63,4 @@ Verified accounts are saved in:
 This file is automatically updated when commands succeed via DM with the bot.
 
 ## License
-Apache 2.0
+MIT License
