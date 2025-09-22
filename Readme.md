@@ -17,7 +17,7 @@ discord.roleId=987654321098765432
 discord.adminId=000000000000000000
 security.maxFailures=3
 security.blockMinutes=5
-integration.lom.allowedUsersPath=plugins/limitedofflinemode/allowed-users.txt
+integration.lom.allowedUsersPath=plugins/limited-offline-mode/allowed-users.txt
 ```
 - Create a Discord bot and obtain its token (search online for instructions).  
 - IDs can be obtained from Discord with Developer Mode enabled.
@@ -49,11 +49,20 @@ integration.lom.allowedUsersPath=plugins/limitedofflinemode/allowed-users.txt
   - The player is disconnected from Velocity.
   - The role is removed from the user in the Discord server.
 
+## Integrations
+
+### [Limited Offline Mode](https://modrinth.com/plugin/limited-offline-mode)
+
+This plugin is designed to integrate with the **Limited Offline Mode** plugin.
+
+When enabled, players listed in LOM's `allowed-users.txt` can bypass Discord verification, even when the proxy is in `online-mode`. This is useful for allowing specific accounts (like camera bots or test accounts) to join without needing a Discord account, while still enforcing verification for all other online players.
+
+To enable this, set the path to LOM's `allowed-users.txt` in your `config.properties`. If this path is left empty, the integration is disabled.
+
 ## Security
-- Offline-mode users skip Discord verification.  
-- Always run Velocity in online mode for secure operation.  
-- Verification failures are counted per IP. After 3 failures, the IP is blocked for 5 minutes.  
-  Immediate unblocking requires restarting Velocity.
+- This plugin is designed to run on a Velocity proxy set to `online-mode=true`.
+- **Integration with Limited Offline Mode**: For securely allowing specific offline accounts, this plugin can integrate with `Limited Offline Mode`. See the "Integrations" section for details.
+- **IP Blocking**: To prevent brute-force attacks, verification failures are counted per IP. After a configurable number of failures (default: 3), the IP is temporarily blocked (default: 5 minutes).
 
 ## Data Storage
 Verified accounts are saved in:
