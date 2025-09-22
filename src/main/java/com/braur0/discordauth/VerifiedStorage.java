@@ -1,5 +1,6 @@
-package com.example.discordauth;
+package com.braur0.discordauth;
 
+import org.slf4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -19,11 +20,14 @@ public class VerifiedStorage {
 
     private final Path file;
     private final Gson gson = new Gson();
+    private final Logger logger;
 
     // Map to store verified players: UUID -> Discord ID
     private final Map<UUID, String> verifiedMap = new ConcurrentHashMap<>();
+    private final Map<String, UUID> discordIdToUuidMap = new ConcurrentHashMap<>();
 
-    public VerifiedStorage(Path file) {
+    public VerifiedStorage(Path file, Logger logger) {
+        this.logger = logger;
         this.file = file;
         load();
     }
@@ -43,18 +47,13 @@ public class VerifiedStorage {
 
                 verifiedMap.clear();
                 verifiedMap.putAll(tempMap);
+                // Populate the reverse map
+                discordIdToUuidMap.clear();
+                verifiedMap.forEach((uuid, discordId) -> discordIdToUuidMap.put(discordId, uuid));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to load verified players from {}", file, e);
         }
-    }
-
-    /**
-     * Reload the storage from file, clearing current entries.
-     */
-    public void reload() {
-        verifiedMap.clear();
-        load();
     }
 
     /**
@@ -66,7 +65,7 @@ public class VerifiedStorage {
             verifiedMap.forEach((k, v) -> toSave.put(k.toString(), v));
             Files.writeString(file, gson.toJson(toSave));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to save verified players to {}", file, e);
         }
     }
 
@@ -75,6 +74,7 @@ public class VerifiedStorage {
      */
     public void add(UUID uuid, String discordId) {
         verifiedMap.put(uuid, discordId);
+        discordIdToUuidMap.put(discordId, uuid);
         save();
     }
 
@@ -89,7 +89,10 @@ public class VerifiedStorage {
      * Remove a verified player and save the storage.
      */
     public void remove(UUID uuid) {
-        verifiedMap.remove(uuid);
+        String discordId = verifiedMap.remove(uuid);
+        if (discordId != null) {
+            discordIdToUuidMap.remove(discordId);
+        }
         save();
     }
 
@@ -105,9 +108,6 @@ public class VerifiedStorage {
      * Returns null if not found.
      */
     public UUID getPlayerIdByDiscordId(String discordId) {
-        for (Map.Entry<UUID, String> entry : verifiedMap.entrySet()) {
-            if (entry.getValue().equals(discordId)) return entry.getKey();
-        }
-        return null;
+        return discordIdToUuidMap.get(discordId);
     }
 }

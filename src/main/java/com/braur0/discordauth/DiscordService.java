@@ -1,4 +1,4 @@
-package com.example.discordauth;
+package com.braur0.discordauth;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -33,6 +33,7 @@ public class DiscordService extends ListenerAdapter {
 
     // Map to track pending verification codes for each player
     private final Map<UUID, String> pendingCodes = new ConcurrentHashMap<>();
+    private final Map<String, UUID> codeToPlayerId = new ConcurrentHashMap<>();
 
     private final long allowedGuildId;
     private final long allowedRoleId;
@@ -72,6 +73,7 @@ public class DiscordService extends ListenerAdapter {
     public String generateVerificationCode(UUID playerId) {
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
         pendingCodes.put(playerId, code);
+        codeToPlayerId.put(code, playerId);
         return code;
     }
 
@@ -79,7 +81,6 @@ public class DiscordService extends ListenerAdapter {
      * Check if a player has already been verified.
      */
     public boolean isVerified(UUID playerId) {
-        verifiedStorage.reload();
         return verifiedStorage.isVerified(playerId);
     }
 
@@ -87,7 +88,10 @@ public class DiscordService extends ListenerAdapter {
      * Remove a pending verification code for a player.
      */
     public void removePendingCode(UUID playerId) {
-        pendingCodes.remove(playerId);
+        String code = pendingCodes.remove(playerId);
+        if (code != null) {
+            codeToPlayerId.remove(code);
+        }
     }
 
     @Override
@@ -154,11 +158,7 @@ public class DiscordService extends ListenerAdapter {
         String code = args[1];
 
         // Find the player ID corresponding to this code
-        UUID playerId = pendingCodes.entrySet().stream()
-                .filter(e -> e.getValue().equals(code))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+        UUID playerId = codeToPlayerId.get(code);
 
         if (playerId == null) {
             event.getChannel().sendMessage("❌ Invalid or expired code.").queue();
